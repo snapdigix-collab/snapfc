@@ -64,10 +64,10 @@
     .listitem h4{margin:0 0 7px}
     .listactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
     .listactions button{flex:1;min-width:100px}
-    .admin-tabs{display:flex;gap:8px;overflow-x:auto;margin:15px 0;padding-bottom:6px}.admin-panel{min-width:0}.payment-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}.payment-table th,.payment-table td{padding:10px 7px;border-bottom:1px solid var(--border);text-align:left}.payment-table th{color:var(--yellow)}.payment-table input[type=checkbox]{width:18px;height:18px;accent-color:var(--yellow)}.payment-table td.checkcell{text-align:center}.gallerygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .admin-tabs{display:flex;gap:8px;overflow-x:auto;margin:15px 0;padding-bottom:6px}.admin-panel{min-width:0}gallerygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
     .galleryitem{border:1px solid var(--border);background:#081321;border-radius:10px;padding:12px;overflow-wrap:anywhere}
     .galleryitem img{width:100%;border-radius:8px;max-height:230px;object-fit:cover}
-    .pending{background:#101827;border:1px solid #facc15;border-radius:12px;padding:13px;margin:10px 0}.community-post{background:#0b1728;border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}.community-meta{font-size:11px;color:var(--muted);margin:6px 0 10px}.chatlog{max-height:330px;overflow:auto;background:#081321;border:1px solid var(--border);border-radius:10px;padding:10px}.chatline{padding:10px 8px;border-bottom:1px solid #263449;overflow-wrap:anywhere}.chatline:last-child{border-bottom:0}.chatmessage{font-size:14px;line-height:1.45;white-space:pre-wrap}.chatauthor{display:block;margin-top:5px;font-size:10px;font-weight:700;color:var(--muted)}.chattime{display:block;margin-top:2px;font-size:9px;color:#718096}.community-actions{display:flex;gap:8px;flex-wrap:wrap}.community-actions button{flex:1}
+    community-post{background:#0b1728;border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}.community-meta{font-size:11px;color:var(--muted);margin:6px 0 10px}.chatlog{max-height:330px;overflow:auto;background:#081321;border:1px solid var(--border);border-radius:10px;padding:10px}.chatline{padding:10px 8px;border-bottom:1px solid #263449;overflow-wrap:anywhere}.chatline:last-child{border-bottom:0}.chatmessage{font-size:14px;line-height:1.45;white-space:pre-wrap}.chatauthor{display:block;margin-top:5px;font-size:10px;font-weight:700;color:var(--muted)}.chattime{display:block;margin-top:2px;font-size:9px;color:#718096}.community-actions{display:flex;gap:8px;flex-wrap:wrap}.community-actions button{flex:1}
     footer{text-align:center;color:#718096;font-size:11px;padding:18px}
     @media(max-width:600px){.grid{grid-template-columns:1fr}.page{padding:0 10px 25px}.hero{padding:17px}.hero h2{font-size:22px}.stats{gap:6px}.stat{padding:10px 7px}.stat strong{font-size:21px}.brand h1{font-size:17px}.logo{width:40px;height:40px}}
 
@@ -98,11 +98,8 @@
     .player.out{background:#382018;color:#FDBA74}
     .inbtn{background:#166534;color:#fff}
     .outbtn{background:#8A3925;color:#fff}
-    .listitem,.galleryitem,.pending,.community-post{background:#171411;border-color:#4A3020}
-    .payment-table th{color:#FDBA74}
-    .payment-table th,.payment-table td{border-bottom-color:#4A3020}
-    .payment-table input[type=checkbox]{accent-color:#F97316}
-    .chatlog{background:#100E0C;border-color:#4A3020}
+    .listitem,.galleryitem,.community-post{background:#171411;border-color:#4A3020}
+        .chatlog{background:#100E0C;border-color:#4A3020}
     .chatline{border-bottom-color:#3B2A1E}
     .chatauthor{color:#FDBA74}
     .chattime{color:#9D8B7B}
@@ -112,7 +109,6 @@
     .modal{background:#000D}
     .modalbox{border-color:#F97316}
     .close{background:#292019;color:#F5EDE5}
-    .pending{border-color:#F97316}
     footer{color:#9D8B7B}
     .iconbtn{background:#292019;color:#FDBA74;border:1px solid #684020}
     button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #FDBA74;outline-offset:2px}
@@ -140,8 +136,7 @@
     .tabs,.admin-tabs{gap:7px;padding:7px;margin:18px 0 20px;border:1px solid #332419;border-radius:13px;background:#12100E;scrollbar-width:thin}
     .tab{border-radius:8px;border:1px solid transparent;background:transparent;color:#BDB3AA;padding:11px 15px;font-size:10px;letter-spacing:.7px;font-weight:900}.tab.active{background:#F97316;color:#1B1008;box-shadow:0 4px 16px #F9731625}
     .match{display:grid;grid-template-columns:5px minmax(0,1fr);background:linear-gradient(145deg,#1B1713,#12100E);border:1px solid #49301E;border-radius:17px;margin-bottom:17px;box-shadow:0 13px 30px #0004;transition:border-color .2s,transform .2s}.match:hover{border-color:#A94E1B;transform:translateY(-2px)}.matchbar{height:100%;min-height:100%;background:linear-gradient(180deg,#FB923C,#C2410C)}.matchbody{padding:22px 23px;min-width:0}.match h3{font-size:21px;font-weight:950;letter-spacing:-.3px;margin:13px 0}.matchmeta{font-size:12px;line-height:1.9;color:#D6C5B7;padding:12px 14px;margin:12px 0;background:#100E0C;border:1px solid #332419;border-radius:10px}.pill{background:#2B1B10;color:#FDBA74;border:1px solid #59351C;border-radius:6px;padding:7px 10px;font-size:10px;letter-spacing:.5px}.response{gap:10px;margin:17px 0}.inbtn{background:#173522;color:#D1FAE5;border:1px solid #28643F}.outbtn{background:#3B1913;color:#FED7AA;border:1px solid #7F2D18}.players{gap:7px;margin:10px 0}.player{background:#1B3020;color:#C4F0CB;border:1px solid #2C5132;border-radius:6px;font-size:10px;padding:7px 9px}.player.out{background:#321A12;color:#FDBA74;border-color:#69351C}.match details{margin-top:12px;padding-top:12px;border-top:1px solid #332419}.match summary{font-size:11px;font-weight:800;color:#FDBA74;cursor:pointer}
-    .listitem,.galleryitem,.pending,.community-post{background:#171411;border:1px solid #3B2A1E;border-radius:13px;padding:15px;margin:10px 0}.listitem h4{font-size:14px}.listactions{gap:8px}.gallerygrid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.galleryitem img{border:1px solid #3B2A1E;border-radius:9px;max-height:280px}.chatlog{max-height:420px;background:#100E0C;border:1px solid #3B2A1E;border-radius:13px;padding:12px}.chatline{padding:13px 10px;border-bottom:1px solid #302218}.chatmessage{font-size:13px;color:#F5EDE5}.chatauthor{font-size:9px;letter-spacing:.5px;color:#FB923C}.chattime{font-size:9px;color:#8C7A6C}.payment-table{border:1px solid #3B2A1E;border-radius:10px;overflow:hidden}.payment-table th{background:#21170F;color:#FDBA74}.payment-table th,.payment-table td{border-bottom:1px solid #332419}.payment-table input[type=checkbox]{accent-color:#F97316}
-    .modal{backdrop-filter:blur(7px);background:#000D}.modalbox{background:#171411;border:1px solid #F97316;border-radius:18px;box-shadow:0 25px 80px #000B;padding:24px}.close{min-height:32px;border-radius:8px}
+    .listitem,.galleryitem,.community-post{background:#171411;border:1px solid #3B2A1E;border-radius:13px;padding:15px;margin:10px 0}.listitem h4{font-size:14px}.listactions{gap:8px}.gallerygrid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.galleryitem img{border:1px solid #3B2A1E;border-radius:9px;max-height:280px}.chatlog{max-height:420px;background:#100E0C;border:1px solid #3B2A1E;border-radius:13px;padding:12px}.chatline{padding:13px 10px;border-bottom:1px solid #302218}.chatmessage{font-size:13px;color:#F5EDE5}.chatauthor{font-size:9px;letter-spacing:.5px;color:#FB923C}.chattime{font-size:9px;color:#8C7A6C}    .modal{backdrop-filter:blur(7px);background:#000D}.modalbox{background:#171411;border:1px solid #F97316;border-radius:18px;box-shadow:0 25px 80px #000B;padding:24px}.close{min-height:32px;border-radius:8px}
     .notice{border-radius:10px;font-size:13px}.notice.info{background:#21170F;border:1px solid #55331B;color:#F5EDE5}.notice.error{background:#32150F;color:#FED7AA;border-color:#7F2D18}.notice.success{background:#14251A;color:#BBF7D0;border-color:#28583A}
     footer{border-top:1px solid #2A1D14;margin-top:25px;color:#88796D;letter-spacing:1px}
     @media(min-width:900px){#matchList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:start}#matchList .match{margin-bottom:0;height:100%}}
@@ -257,7 +252,7 @@
     <div class="admin-tabs">
       <button class="tab active" data-admin-tab="createPollPanel">CREATE MATCH POLL</button>
       <button class="tab" data-admin-tab="registeredPlayersPanel">REGISTERED PLAYERS</button>
-      <button class="tab" data-admin-tab="managePollsPanel">MANAGE POLLS / PAYMENTS</button>
+      <button class="tab" data-admin-tab="managePollsPanel">MANAGE POLLS</button>
       <button class="tab" data-admin-tab="galleryAdminPanel">GALLERY ITEMS</button>
     </div>
     <div id="createPollPanel" class="admin-panel">
@@ -275,7 +270,7 @@
       </div>
     </div>
     <div id="registeredPlayersPanel" class="admin-panel hidden"><div class="card"><h3>Registered Players</h3><div id="usersList"></div></div></div>
-    <div id="managePollsPanel" class="admin-panel hidden"><div class="card"><h3>Manage Published Polls & Payments</h3><div id="adminPollList"></div></div></div>
+    <div id="managePollsPanel" class="admin-panel hidden"><div class="card"><h3>Manage Published Polls</h3><div id="adminPollList"></div></div></div>
     <div id="galleryAdminPanel" class="admin-panel hidden">
       <div class="card"><h3>Publish Gallery Item</h3>
         <p class="small">For photos, use a publicly accessible image URL. YouTube URLs are also supported.</p>
@@ -315,14 +310,7 @@
     </div>
   </div>
 
-  <div id="pendingModal" class="modal hidden">
-    <div class="modalbox">
-      <h3 style="color:#facc15">Your Match Fees Are Pending</h3>
-      <p id="pendingSummary" class="muted"></p>
-      <div id="pendingList"></div>
-      <button id="closePending" class="primary full" type="button">OK, GOT IT</button>
-    </div>
-  </div>
+</div>
 </main>
 <footer>TEAM SNAP FOOTBALL • BUILT FOR THE SQUAD</footer>
 
@@ -529,9 +517,9 @@ document.addEventListener('DOMContentLoaded', function () {
       $('statLatest').textContent=data.polls&&data.polls[0]?data.polls[0].inCount:0;
       notificationPolls=data.polls||[];
       if(!notificationInitialized.polls){notificationSeen.polls=[];notificationInitialized.polls=true;saveNotificationState();}
-      renderMatches();renderMyHistory();showView('playerView');renderPending(data);
+      renderMatches();renderMyHistory();showView('playerView');
       loadTeamHistory();loadPlayerGallery();loadNotificationChat(true);refreshNotificationCenter();startNotificationPolling();
-    },null,err=>{showView('authView');message(err||'Unable to load dashboard. Please login again.','error');});
+    },null,err=>{showView('transitionView');message(err||'Unable to load dashboard. Please try again.','error');});
   }
 
   function renderMatches(){
@@ -547,20 +535,29 @@ document.addEventListener('DOMContentLoaded', function () {
           <button class="inbtn" data-response="${esc(p.id)}" data-status="IN">✓ I'M IN</button>
           <button class="outbtn" data-response="${esc(p.id)}" data-status="OUT">✕ I'M OUT</button>
         </div>
-        <section class="extra-box"><div class="extra-title">Additional Players <span>(Independent attendance)</span></div>${p.myStatus==='IN'?`<div class="extra-counter"><button type="button" class="secondary" data-guest-minus="${esc(p.id)}" aria-label="Decrease additional players">−</button><strong>${guestDrafts[p.id]||0}</strong><button type="button" class="primary" data-guest-plus="${esc(p.id)}" aria-label="Increase additional players">+</button></div>`:''}<div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player ${g.status==='OUT'?'out':''}">${esc(g.name)} <small>${esc(g.status||'IN')}</small> <button type="button" class="success" style="padding:3px 6px;margin-left:4px" data-guest-status="${esc(p.id)}" data-guest-id="${esc(g.id)}" data-status="${g.status==='IN'?'OUT':'IN'}">Mark ${g.status==='IN'?'OUT':'IN'}</button>${p.myStatus==='IN'?`<button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button>`:''}</span>`).join('')||'<span class="small">No additional players added yet.</span>'}</div>${p.myStatus==='IN'&&(guestDrafts[p.id]||0)>0?`<div class="guest-inputs">${Array.from({length:guestDrafts[p.id]},(_,i)=>`<label>Extra Player ${i+1} name (required)<input type="text" maxlength="60" data-guest-name="${esc(p.id)}" placeholder="Enter player name" autocomplete="off"></label>`).join('')}<button type="button" class="success full" data-save-guests="${esc(p.id)}">SAVE ADDITIONAL PLAYERS</button></div>`:''}</section>
+        <section class="extra-box"><div class="extra-title">Additional Players <span>(Extra players only)</span></div>${p.myStatus==='IN'?`<div class="extra-counter"><button type="button" class="secondary" data-guest-minus="${esc(p.id)}" aria-label="Decrease additional players">−</button><strong>${guestDrafts[p.id]||0}</strong><button type="button" class="primary" data-guest-plus="${esc(p.id)}" aria-label="Increase additional players">+</button></div>`:''}<div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player ${g.status==='OUT'?'out':''}">${esc(g.name)} <small>${esc(g.status||'IN')}</small> <button type="button" class="success" style="padding:3px 6px;margin-left:4px" data-guest-status="${esc(p.id)}" data-guest-id="${esc(g.id)}" data-status="${g.status==='IN'?'OUT':'IN'}">Mark ${g.status==='IN'?'OUT':'IN'}</button>${p.myStatus==='IN'?`<button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button>`:''}</span>`).join('')||'<span class="small">No additional players added yet.</span>'}</div>${p.myStatus==='IN'&&(guestDrafts[p.id]||0)>0?`<div class="guest-inputs">${Array.from({length:guestDrafts[p.id]},(_,i)=>`<label>Extra Player ${i+1} name (required)<input type="text" maxlength="60" data-guest-name="${esc(p.id)}" placeholder="Enter player name" autocomplete="off"></label>`).join('')}<button type="button" class="success full" data-save-guests="${esc(p.id)}">SAVE ADDITIONAL PLAYERS</button></div>`:''}</section>
         <button class="secondary full" type="button" data-player-share="${esc(p.id)}">📲 SHARE POLL ON WHATSAPP</button>
         <b>Available players (${Number(p.inCount)||0})</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'<span class="small">No responses yet.</span>'}</div>
         <details><summary>View OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'No OUT responses.'}</div></details>
-        <p class="small">Contribution: ${esc(p.myContributionStatus||'UNPAID')}</p>
       </div></article>`).join('');
     list.querySelectorAll('[data-response]').forEach(b=>b.addEventListener('click',()=>{
-      call('submitResponse',[playerPhone,b.dataset.response,b.dataset.status],data=>{
-        playerData=data;renderMatches();renderMyHistory();
-        const responded=(data.polls||[]).find(p=>String(p.id)===String(b.dataset.response));if(responded)markSeen('polls',[responded]);
-        $('statIn').textContent=data.totalIn||0;
-        $('statPolls').textContent=(data.polls||[]).length;
-        $('statLatest').textContent=data.polls&&data.polls[0]?data.polls[0].inCount:0;
-        renderPending(data);loadTeamHistory();refreshNotificationCenter();message('Your response was saved.','success');
+      const pollId=b.dataset.response, status=b.dataset.status;
+      const match=(playerData.polls||[]).find(p=>String(p.id)===String(pollId));
+      const guests=(match&&match.myGuestPlayers)||[];
+      // When the registered player goes OUT, contact them and confirm each additional player's status.
+      const guestStatuses=status==='OUT'&&guests.length?guests.map(g=>({id:g.id,status:confirm('Is '+g.name+' playing?\n\nOK = IN\nCancel = OUT')?'IN':'OUT'})):[];
+      call('submitResponse',[playerPhone,pollId,status],data=>{
+        const saveGuestStatus=(i)=>{
+          if(i>=guestStatuses.length){
+            playerData=data;renderMatches();renderMyHistory();
+            const responded=(data.polls||[]).find(p=>String(p.id)===String(pollId));if(responded)markSeen('polls',[responded]);
+            $('statIn').textContent=data.totalIn||0;$('statPolls').textContent=(data.polls||[]).length;$('statLatest').textContent=data.polls&&data.polls[0]?data.polls[0].inCount:0;
+            loadTeamHistory();refreshNotificationCenter();message('Your response and additional player statuses were saved.','success');return;
+          }
+          const g=guestStatuses[i];
+          call('setGuestPlayerStatus',[playerPhone,pollId,g.id,g.status],()=>saveGuestStatus(i+1),null,err=>{message('Registered response saved, but an additional player status could not be save: '+err,'error');loadPlayer();});
+        };
+        saveGuestStatus(0);
       },b);
     }));
     list.querySelectorAll('[data-guest-plus]').forEach(b=>b.addEventListener('click',()=>{
@@ -603,14 +600,6 @@ document.addEventListener('DOMContentLoaded', function () {
       $('teamHistoryList').innerHTML=data.length?data.map(p=>`<div class="listitem"><h4>${esc(p.title)} — ${esc(p.date)}</h4><p>${p.inCount} IN (${p.registeredInCount||0} registered + ${p.guestInCount||0} additional) · ${p.outCount} OUT · ${p.respondedCount} responded</p><b>IN players</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'None'}</div><details><summary>OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'None'}</div></details></div>`).join(''):'<p class="muted">No history available.</p>';
     });
   }
-  function renderPending(data){
-    const p=data.pendingPolls||[];
-    if(!p.length){closeModal('pendingModal');return;}
-    $('pendingSummary').textContent=p.length+' pending match contribution(s). Total amount: ₹'+(Number(data.totalPendingAmount)||0).toLocaleString('en-IN');
-    $('pendingList').innerHTML=p.map(x=>`<div class="pending"><b>${esc(x.title)}</b><p class="small">${esc(x.date)}</p>${Number(x.amount)>0?'Amount: ₹'+Number(x.amount).toLocaleString('en-IN'):'Amount not set'} <span class="pill">UNPAID</span></div>`).join('');
-    openModal('pendingModal');
-  }
-  $('closePending').addEventListener('click',()=>closeModal('pendingModal'));
 
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
@@ -673,34 +662,18 @@ document.addEventListener('DOMContentLoaded', function () {
           <button class="secondary" data-share="${esc(p.id)}">WHATSAPP</button>
           <button class="danger" data-delete="${esc(p.id)}" data-title="${esc(p.title)}">DELETE</button>
         </div>
-        <h4 style="margin-top:14px">Player Payment Status</h4>
-        <p class="small">Select Paid or Unpaid for each player, then save all changes together.</p>
-        <div style="overflow-x:auto"><table class="payment-table"><thead><tr><th>Player</th><th>Paid</th><th>Unpaid</th></tr></thead><tbody>
-          ${(p.paymentStatuses||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="checkcell"><input type="checkbox" aria-label="${esc(c.name)} paid" data-payment="${esc(p.id)}" data-user="${esc(c.userId)}" data-status="PAID" ${c.status==='PAID'?'checked':''}></td><td class="checkcell"><input type="checkbox" aria-label="${esc(c.name)} unpaid" data-payment="${esc(p.id)}" data-user="${esc(c.userId)}" data-status="UNPAID" ${c.status!=='PAID'?'checked':''}></td></tr>`).join('')}
-        </tbody></table></div>
-        <button class="primary full" data-savepayments="${esc(p.id)}">SAVE ALL PAYMENT STATUSES</button>
-      </div>`).join(''):'<p class="muted">No polls created yet.</p>';
+</div>`).join(''):'<p class="muted">No polls created yet.</p>';
 
     $('adminPollList').querySelectorAll('[data-editpoll]').forEach(b=>b.addEventListener('click',()=>{
       const p=(adminData.polls||[]).find(x=>x.id===b.dataset.editpoll);if(!p)return;
       $('pollEditId').value=p.id;$('pollDate').value=p.date;$('pollTitle').value=p.title;$('pollVenue').value=p.venue||'';$('pollNote').value=p.note||'';
       $('pollFormHeading').textContent='Edit Published Match Poll';$('pollSubmitButton').textContent='SAVE POLL CHANGES';$('cancelPollEdit').classList.remove('hidden');$('whatsappLink').classList.add('hidden');selectAdminTab('createPollPanel');window.scrollTo({top:0,behavior:'smooth'});
     }));
-    $('adminPollList').querySelectorAll('[data-payment]').forEach(box=>box.addEventListener('change',()=>{
-      if(box.checked){const pair=$('adminPollList').querySelectorAll('[data-payment="'+box.dataset.payment+'"][data-user="'+box.dataset.user+'"]');pair.forEach(other=>{if(other!==box)other.checked=false;});}
-      else {const pair=$('adminPollList').querySelectorAll('[data-payment="'+box.dataset.payment+'"][data-user="'+box.dataset.user+'"]');if(!Array.from(pair).some(x=>x.checked))box.checked=true;}
-    }));
-    $('adminPollList').querySelectorAll('[data-savepayments]').forEach(b=>b.addEventListener('click',()=>{
-      const pid=b.dataset.savepayments;const boxes=Array.from($('adminPollList').querySelectorAll('[data-payment="'+pid+'"]'));
-      const byUser={};boxes.forEach(x=>{if(x.checked)byUser[x.dataset.user]=x.dataset.status;});
-      const statuses=Object.keys(byUser).map(userId=>({userId,status:byUser[userId]}));
-      call('adminSavePollPaymentStatuses',[adminCredentials.id,adminCredentials.password,pid,statuses],r=>{message(r.message||'Payment statuses updated.','success');loadAdmin();},b);
-    }));
     $('adminPollList').querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{
       call('adminSetPollActive',[adminCredentials.id,adminCredentials.password,b.dataset.toggle,b.dataset.active==='true'],()=>{message('Poll status updated.','success');loadAdmin();},b);
     }));
     $('adminPollList').querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{
-      if(!confirm('Permanently delete poll "'+b.dataset.title+'" and its responses/contributions?'))return;
+      if(!confirm('Permanently delete poll "'+b.dataset.title+'" and its responses?'))return;
       call('adminDeletePoll',[adminCredentials.id,adminCredentials.password,b.dataset.delete,'DELETE'],()=>{message('Poll deleted.','success');loadAdmin();},b);
     }));
     $('adminPollList').querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>{

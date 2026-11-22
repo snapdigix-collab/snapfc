@@ -150,6 +150,7 @@
 
   
     /* Notification center: matte black + burnt orange */
+    @keyframes snapSpin{to{transform:rotate(360deg)}}
     .notification-wrap{position:relative;display:flex;align-items:center}
     .notification-bell{position:relative}
     .notification-bell svg{width:21px;height:21px}
@@ -212,6 +213,14 @@
     </div>
   </section>
 
+  <section id="transitionView" class="hidden">
+    <div class="card" style="max-width:560px;margin:45px auto;text-align:center;padding:35px 20px">
+      <div style="font-size:42px;margin-bottom:12px">⚽</div>
+      <h2 style="margin:0 0 10px;color:#FB923C">TEAM SNAP</h2>
+      <p id="transitionMessage" class="muted" style="margin:0">Login successful. Loading your dashboard…</p>
+      <div style="margin:22px auto 0;width:44px;height:44px;border:4px solid #493020;border-top-color:#F97316;border-radius:50%;animation:snapSpin .8s linear infinite"></div>
+    </div>
+  </section>
   <section id="playerView" class="hidden">
     <div class="hero"><span class="badge">PLAYER DASHBOARD</span><h2 id="welcomeName">Welcome</h2><p>Confirm your availability and follow your squad.</p></div>
     <div class="stats">
@@ -424,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const API_URL = 'https://script.google.com/macros/s/AKfycbz-UWi5a_Auc0UFBRXYwVIg9TaguppSjY02lG2rgF7l5pNofa0evMbaW1IQEnY3rBE3/exec';
   const guestDrafts = {}; // inline quantity drafts, keyed by poll id
   let apiCallCounter=0;
-  function call(method,args,success,button) {
+  function call(method,args,success,button,errorHandler) {
     busy(button,true);
     // GitHub Pages cannot use google.script.run. Use the Apps Script JSONP API bridge.
     // Large base64 gallery-photo uploads cannot safely be sent in a URL, so block them here.
@@ -435,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const script=document.createElement('script');
     let completed=false;
     const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}};
-    const finish=(err,result)=>{if(completed)return;completed=true;busy(button,false);cleanup();if(err){message(err,'error');console.error(method,err);}else{try{success&&success(result);}catch(e){message('Page error: '+e.message,'error');console.error(e);}}};
+    const finish=(err,result)=>{if(completed)return;completed=true;busy(button,false);cleanup();if(err){if(errorHandler){errorHandler(err);}else message(err,'error');console.error(method,err);}else{try{success&&success(result);}catch(e){message('Page error: '+e.message,'error');console.error(e);}}};
     window[callbackName]=payload=>{if(payload&&payload.ok)finish(null,payload.result);else finish(payload&&payload.error?payload.error:'Request failed.',null);};
     script.onerror=()=>finish('Unable to connect to Apps Script API. Check deployment access and URL.',null);
     const query=new URLSearchParams({api:'1',method:method,args:JSON.stringify(args||[]),callback:callbackName});
@@ -445,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(()=>finish('API request timed out. Please try again.',null),20000);
   }
   function showView(id) {
-    ['authView','playerView','adminView'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
+    ['authView','transitionView','playerView','adminView'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
     $('logoutTop').classList.toggle('hidden',id==='authView');
     $('refreshTop').classList.toggle('hidden',id==='authView');
     $('notificationWrap').classList.toggle('hidden',id!=='playerView');
@@ -495,6 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!/^\d{10}$/.test(phone)){message('Enter valid 10-digit phone number.','error');return;}
     call('loginPlayer',[phone],()=>{
       playerPhone=phone;
+      $('transitionMessage').textContent='Login successful. Loading your dashboard…';showView('transitionView');
       notificationStoreKey='teamSnapNotifications:'+phone;
       notificationSeen={polls:[],gallery:[],chat:[]};notificationInitialized={polls:false,gallery:false,chat:false};
       readNotificationState();
@@ -506,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault();
     const id=$('adminId').value.trim(),password=$('adminPassword').value;
     call('adminLogin',[id,password],()=>{
-      adminCredentials={id,password};closeModal('adminModal');loadAdmin();
+      adminCredentials={id,password};closeModal('adminModal');$('transitionMessage').textContent='Admin login successful. Loading admin dashboard…';showView('transitionView');loadAdmin();
     },e.submitter);
   });
 
@@ -521,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if(!notificationInitialized.polls){notificationSeen.polls=[];notificationInitialized.polls=true;saveNotificationState();}
       renderMatches();renderMyHistory();showView('playerView');renderPending(data);
       loadTeamHistory();loadPlayerGallery();loadNotificationChat(true);refreshNotificationCenter();startNotificationPolling();
-    });
+    },null,err=>{showView('authView');message(err||'Unable to load dashboard. Please login again.','error');});
   }
 
   function renderMatches(){
@@ -537,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <button class="inbtn" data-response="${esc(p.id)}" data-status="IN">✓ I'M IN</button>
           <button class="outbtn" data-response="${esc(p.id)}" data-status="OUT">✕ I'M OUT</button>
         </div>
-        ${p.myStatus==='IN'&&p.active?`<section class="extra-box"><div class="extra-title">Additional Players <span>(Extra players only)</span></div><div class="extra-counter"><button type="button" class="secondary" data-guest-minus="${esc(p.id)}" aria-label="Decrease additional players">−</button><strong>${guestDrafts[p.id]||0}</strong><button type="button" class="primary" data-guest-plus="${esc(p.id)}" aria-label="Increase additional players">+</button></div><div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player">${esc(g.name)} <button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button></span>`).join('')}</div>${(guestDrafts[p.id]||0)>0?`<div class="guest-inputs">${Array.from({length:guestDrafts[p.id]},(_,i)=>`<label>Extra Player ${i+1} name (required)<input type="text" maxlength="60" data-guest-name="${esc(p.id)}" placeholder="Enter player name" autocomplete="off"></label>`).join('')}<button type="button" class="success full" data-save-guests="${esc(p.id)}">SAVE ADDITIONAL PLAYERS</button></div>`:''}</section>`:''}
+        <section class="extra-box"><div class="extra-title">Additional Players <span>(Independent attendance)</span></div>${p.myStatus==='IN'?`<div class="extra-counter"><button type="button" class="secondary" data-guest-minus="${esc(p.id)}" aria-label="Decrease additional players">−</button><strong>${guestDrafts[p.id]||0}</strong><button type="button" class="primary" data-guest-plus="${esc(p.id)}" aria-label="Increase additional players">+</button></div>`:''}<div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player ${g.status==='OUT'?'out':''}">${esc(g.name)} <small>${esc(g.status||'IN')}</small> <button type="button" class="success" style="padding:3px 6px;margin-left:4px" data-guest-status="${esc(p.id)}" data-guest-id="${esc(g.id)}" data-status="${g.status==='IN'?'OUT':'IN'}">Mark ${g.status==='IN'?'OUT':'IN'}</button>${p.myStatus==='IN'?`<button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button>`:''}</span>`).join('')||'<span class="small">No additional players added yet.</span>'}</div>${p.myStatus==='IN'&&(guestDrafts[p.id]||0)>0?`<div class="guest-inputs">${Array.from({length:guestDrafts[p.id]},(_,i)=>`<label>Extra Player ${i+1} name (required)<input type="text" maxlength="60" data-guest-name="${esc(p.id)}" placeholder="Enter player name" autocomplete="off"></label>`).join('')}<button type="button" class="success full" data-save-guests="${esc(p.id)}">SAVE ADDITIONAL PLAYERS</button></div>`:''}</section>
         <button class="secondary full" type="button" data-player-share="${esc(p.id)}">📲 SHARE POLL ON WHATSAPP</button>
         <b>Available players (${Number(p.inCount)||0})</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'<span class="small">No responses yet.</span>'}</div>
         <details><summary>View OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'No OUT responses.'}</div></details>
@@ -565,6 +575,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if(names.some(n=>!n)){message('Every additional player name is compulsory.','error');return;}
       if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){message('Duplicate names in this entry are not allowed.','error');return;}
       call('addGuestPlayers',[playerPhone,pollId,names],result=>{guestDrafts[pollId]=0;loadPlayer();message(result.message||'Additional players added.','success');},b);
+    }));
+    list.querySelectorAll('[data-guest-status]').forEach(b=>b.addEventListener('click',()=>{
+      call('setGuestPlayerStatus',[playerPhone,b.dataset.guestStatus,b.dataset.guestId,b.dataset.status],result=>{loadPlayer();message(result.message||'Additional player attendance updated.','success');},b);
     }));
     list.querySelectorAll('[data-remove-guest]').forEach(b=>b.addEventListener('click',()=>{
       if(!confirm('Remove this additional player?'))return;
@@ -640,7 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
       $('adminPolls').textContent=data.polls.length;
       $('adminIn').textContent=data.polls.length?data.polls[0].inCount:0;
       renderAdminUsers();renderAdminPolls();loadAdminGallery();selectAdminTab('createPollPanel');showView('adminView');
-    });
+    },null,null,err=>{showView('authView');message(err||'Unable to load admin dashboard. Please login again.','error');});
   }
   function renderAdminUsers(){
     const u=adminData.users||[];

@@ -56,6 +56,7 @@
     .players{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
     .player{background:#123b2c;color:#bbf7d0;border-radius:6px;padding:6px 8px;font-size:12px}
     .player.out{background:#431b22;color:#fecdd3}
+    .extra-box{margin-top:12px;padding:12px;border:1px solid #34445d;border-radius:12px;background:#0d1929}.extra-title{font-weight:900;margin-bottom:8px}.extra-title span{font-size:11px;color:var(--muted);font-weight:600}.extra-counter{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 12px}.extra-counter button{width:48px;height:44px;font-size:22px;padding:0}.extra-counter strong{min-width:42px;text-align:center;font-size:24px;color:var(--yellow)}.guest-inputs label{margin:8px 0}
     .response{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}
     .inbtn{background:#166534;color:white}
     .outbtn{background:#7f1d1d;color:white}
@@ -421,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
     else{btn.textContent=btn.dataset.oldText||btn.textContent;btn.disabled=false;}
   }
   const API_URL = 'https://script.google.com/macros/s/AKfycbz-UWi5a_Auc0UFBRXYwVIg9TaguppSjY02lG2rgF7l5pNofa0evMbaW1IQEnY3rBE3/exec';
+  const guestDrafts = {}; // inline quantity drafts, keyed by poll id
   let apiCallCounter=0;
   function call(method,args,success,button) {
     busy(button,true);
@@ -535,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <button class="inbtn" data-response="${esc(p.id)}" data-status="IN">✓ I'M IN</button>
           <button class="outbtn" data-response="${esc(p.id)}" data-status="OUT">✕ I'M OUT</button>
         </div>
-        ${p.myStatus==='IN'&&p.active?`<button class="secondary full" type="button" data-manage-guests="${esc(p.id)}">➕ ADD PLAYERS (${(p.myGuestPlayers||[]).length})</button><div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player">${esc(g.name)} <button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button></span>`).join('')}</div>`:''}
+        ${p.myStatus==='IN'&&p.active?`<section class="extra-box"><div class="extra-title">Additional Players <span>(Extra players only)</span></div><div class="extra-counter"><button type="button" class="secondary" data-guest-minus="${esc(p.id)}" aria-label="Decrease additional players">−</button><strong>${guestDrafts[p.id]||0}</strong><button type="button" class="primary" data-guest-plus="${esc(p.id)}" aria-label="Increase additional players">+</button></div><div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player">${esc(g.name)} <button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button></span>`).join('')}</div>${(guestDrafts[p.id]||0)>0?`<div class="guest-inputs">${Array.from({length:guestDrafts[p.id]},(_,i)=>`<label>Extra Player ${i+1} name (required)<input type="text" maxlength="60" data-guest-name="${esc(p.id)}" placeholder="Enter player name" autocomplete="off"></label>`).join('')}<button type="button" class="success full" data-save-guests="${esc(p.id)}">SAVE ADDITIONAL PLAYERS</button></div>`:''}</section>`:''}
         <button class="secondary full" type="button" data-player-share="${esc(p.id)}">📲 SHARE POLL ON WHATSAPP</button>
         <b>Available players (${Number(p.inCount)||0})</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'<span class="small">No responses yet.</span>'}</div>
         <details><summary>View OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'No OUT responses.'}</div></details>
@@ -551,20 +553,18 @@ document.addEventListener('DOMContentLoaded', function () {
         renderPending(data);loadTeamHistory();refreshNotificationCenter();message('Your response was saved.','success');
       },b);
     }));
-    list.querySelectorAll('[data-manage-guests]').forEach(b=>b.addEventListener('click',()=>{
-      const pollId=b.dataset.manageGuests;
-      const countRaw=prompt('How many additional players? (1-20)');
-      if(countRaw===null)return;
-      const count=Number(countRaw);
-      if(!Number.isInteger(count)||count<1||count>20){message('Enter a number from 1 to 20.','error');return;}
-      const names=[];
-      for(let i=1;i<=count;i++){
-        const name=prompt('Name of additional player '+i+' (required):');
-        if(name===null)return;
-        if(!name.trim()){message('Every player name is compulsory.','error');return;}
-        names.push(name.trim());
-      }
-      call('addGuestPlayers',[playerPhone,pollId,names],result=>{loadPlayer();message(result.message||'Additional players added.','success');},b);
+    list.querySelectorAll('[data-guest-plus]').forEach(b=>b.addEventListener('click',()=>{
+      const id=b.dataset.guestPlus; guestDrafts[id]=Math.min(20,Number(guestDrafts[id]||0)+1); renderMatches();
+    }));
+    list.querySelectorAll('[data-guest-minus]').forEach(b=>b.addEventListener('click',()=>{
+      const id=b.dataset.guestMinus; guestDrafts[id]=Math.max(0,Number(guestDrafts[id]||0)-1); renderMatches();
+    }));
+    list.querySelectorAll('[data-save-guests]').forEach(b=>b.addEventListener('click',()=>{
+      const pollId=b.dataset.saveGuests; const fields=[...list.querySelectorAll(`[data-guest-name="${pollId}"]`)];
+      const names=fields.map(f=>f.value.trim());
+      if(names.some(n=>!n)){message('Every additional player name is compulsory.','error');return;}
+      if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){message('Duplicate names in this entry are not allowed.','error');return;}
+      call('addGuestPlayers',[playerPhone,pollId,names],result=>{guestDrafts[pollId]=0;loadPlayer();message(result.message||'Additional players added.','success');},b);
     }));
     list.querySelectorAll('[data-remove-guest]').forEach(b=>b.addEventListener('click',()=>{
       if(!confirm('Remove this additional player?'))return;

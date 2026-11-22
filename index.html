@@ -420,15 +420,27 @@ document.addEventListener('DOMContentLoaded', function () {
     if(on){btn.dataset.oldText=btn.textContent;btn.textContent=label||'PLEASE WAIT...';btn.disabled=true;}
     else{btn.textContent=btn.dataset.oldText||btn.textContent;btn.disabled=false;}
   }
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwn1Ao1_t3BTRU6qp5MjN7eL1wqS5pbSX6lq0aqTAKCFiE9La_GDlpFSNdd3YpZIar4/exec';
+  let apiCallCounter=0;
   function call(method,args,success,button) {
     busy(button,true);
-    try {
-      if(!google || !google.script || !google.script.run) throw new Error('Open the deployed Apps Script /exec URL, not the editor preview.');
-      google.script.run
-        .withSuccessHandler(result=>{busy(button,false);try{success&&success(result);}catch(e){message('Page error: '+e.message,'error');console.error(e);}})
-        .withFailureHandler(err=>{busy(button,false);message(err&&err.message?err.message:String(err),'error');console.error(method,err);})
-        [method](...args);
-    } catch(e) {busy(button,false);message(e.message,'error');console.error(e);}
+    // GitHub Pages cannot use google.script.run. Use the Apps Script JSONP API bridge.
+    // Large base64 gallery-photo uploads cannot safely be sent in a URL, so block them here.
+    if(method==='adminAddGalleryItem' && args && args[2] && String(args[2].type).toUpperCase()==='PHOTO') {
+      busy(button,false); message('Photo uploads are not supported through the GitHub Pages API bridge yet. You can still add YouTube videos.','error'); return;
+    }
+    const callbackName='snapApiCallback_'+(++apiCallCounter)+'_'+Date.now();
+    const script=document.createElement('script');
+    let completed=false;
+    const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}};
+    const finish=(err,result)=>{if(completed)return;completed=true;busy(button,false);cleanup();if(err){message(err,'error');console.error(method,err);}else{try{success&&success(result);}catch(e){message('Page error: '+e.message,'error');console.error(e);}}};
+    window[callbackName]=payload=>{if(payload&&payload.ok)finish(null,payload.result);else finish(payload&&payload.error?payload.error:'Request failed.',null);};
+    script.onerror=()=>finish('Unable to connect to Apps Script API. Check deployment access and URL.',null);
+    const query=new URLSearchParams({api:'1',method:method,args:JSON.stringify(args||[]),callback:callbackName});
+    const fullUrl=API_URL+'?'+query.toString();
+    if(fullUrl.length>1800){finish('This request is too large for the GitHub Pages API bridge.',null);return;}
+    script.src=fullUrl;document.head.appendChild(script);
+    setTimeout(()=>finish('API request timed out. Please try again.',null),20000);
   }
   function showView(id) {
     ['authView','playerView','adminView'].forEach(x=>$(x).classList.toggle('hidden',x!==id));

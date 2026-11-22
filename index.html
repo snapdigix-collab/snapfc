@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team SNAP Football Manager</title>
+  <style>
+    :root{--bg:#050b14;--panel:#101a2b;--panel2:#17243a;--yellow:#facc15;--white:#f8fafc;--muted:#aab7ca;--green:#16a34a;--red:#dc2626;--border:#34445d}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer;border:0;border-radius:10px;padding:12px 14px;font-weight:800}
+    button:disabled{opacity:.55;cursor:wait}
+    input,textarea,select{width:100%;padding:12px;border:1px solid #46546b;border-radius:9px;background:#081321;color:#fff}
+    label{display:block;margin:13px 0 6px;font-size:13px;font-weight:800;color:#dce5f2}
+    .topbar{position:sticky;top:0;z-index:10;background:#0b1728;border-bottom:3px solid var(--yellow);padding:13px}
+    .topinner{max-width:1000px;margin:auto;display:flex;align-items:center;gap:12px}.navicons{margin-left:auto;display:flex;align-items:center;gap:8px}.iconbtn{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:21px;border-radius:12px}.iconbtn svg{width:21px;height:21px;display:block}
+    .logo{width:48px;height:48px;object-fit:contain;background:#202b3e;border-radius:10px}
+    .brand h1{font-size:20px;margin:0;letter-spacing:1px}
+    .brand p{margin:4px 0 0;font-size:10px;color:var(--yellow);font-weight:bold;letter-spacing:1px}
+    .page{max-width:1000px;margin:20px auto;padding:0 14px 35px}
+    .hero{background:linear-gradient(120deg,#101a2b,#17243a);border:1px solid var(--border);border-left:5px solid var(--yellow);padding:22px;border-radius:15px;margin-bottom:16px}
+    .hero h2{margin:8px 0;font-size:25px}
+    .hero p,.muted{color:var(--muted);line-height:1.5}
+    .badge{display:inline-block;color:#111827;background:var(--yellow);font-size:10px;font-weight:900;padding:5px 8px;border-radius:5px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:17px;margin-bottom:15px;min-width:0}
+    .card h3{margin:0 0 13px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+    .stat{background:#0c1727;border:1px solid var(--border);border-bottom:3px solid var(--yellow);border-radius:12px;padding:13px;min-width:0}
+    .stat strong{display:block;font-size:25px;overflow-wrap:anywhere}
+    .stat span{font-size:10px;color:var(--muted);font-weight:bold}
+    .primary{background:var(--yellow);color:#111827}
+    .secondary{background:#263449;color:#fff;border:1px solid #46546b}
+    .danger{background:#7f1d1d;color:white}
+    .success{background:#166534;color:white}
+    .full{width:100%;margin-top:13px}
+    .small{font-size:12px;color:var(--muted);line-height:1.5}
+    .hidden{display:none!important}
+    .tabs{display:flex;gap:8px;overflow-x:auto;margin:15px 0;padding-bottom:6px}
+    .tab{white-space:nowrap;background:#17243a;color:white;border:1px solid var(--border)}
+    .tab.active{background:var(--yellow);color:#111827}
+    .notice{padding:12px;border-radius:9px;margin-bottom:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .notice.error{background:#451a1a;color:#fecaca;border:1px solid #7f1d1d}
+    .notice.success{background:#123522;color:#bbf7d0;border:1px solid #166534}
+    .notice.info{background:#172b49;color:#dbeafe}
+    .modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+    .modalbox{position:relative;width:min(100%,440px);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--yellow);border-radius:16px;padding:22px}
+    .close{float:right;background:#263449;color:white;padding:7px 12px}
+    .match{background:#081321;border:1px solid var(--yellow);border-radius:13px;overflow:hidden;margin-bottom:14px}
+    .matchbar{height:4px;background:var(--yellow)}
+    .matchbody{padding:15px}
+    .match h3{margin:9px 0}
+    .matchmeta{color:#cbd5e1;font-size:13px;line-height:1.6}
+    .pill{display:inline-block;background:#263449;color:var(--yellow);border-radius:20px;padding:5px 9px;font-size:11px;font-weight:bold;margin:3px}
+    .players{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+    .player{background:#123b2c;color:#bbf7d0;border-radius:6px;padding:6px 8px;font-size:12px}
+    .player.out{background:#431b22;color:#fecdd3}
+    .response{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}
+    .inbtn{background:#166534;color:white}
+    .outbtn{background:#7f1d1d;color:white}
+    .listitem{border:1px solid var(--border);border-radius:10px;padding:13px;margin:10px 0;background:#0b1728}
+    .listitem h4{margin:0 0 7px}
+    .listactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .listactions button{flex:1;min-width:100px}
+    .admin-tabs{display:flex;gap:8px;overflow-x:auto;margin:15px 0;padding-bottom:6px}.admin-panel{min-width:0}.payment-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}.payment-table th,.payment-table td{padding:10px 7px;border-bottom:1px solid var(--border);text-align:left}.payment-table th{color:var(--yellow)}.payment-table input[type=checkbox]{width:18px;height:18px;accent-color:var(--yellow)}.payment-table td.checkcell{text-align:center}.gallerygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .galleryitem{border:1px solid var(--border);background:#081321;border-radius:10px;padding:12px;overflow-wrap:anywhere}
+    .galleryitem img{width:100%;border-radius:8px;max-height:230px;object-fit:cover}
+    .pending{background:#101827;border:1px solid #facc15;border-radius:12px;padding:13px;margin:10px 0}.community-post{background:#0b1728;border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}.community-meta{font-size:11px;color:var(--muted);margin:6px 0 10px}.chatlog{max-height:330px;overflow:auto;background:#081321;border:1px solid var(--border);border-radius:10px;padding:10px}.chatline{padding:10px 8px;border-bottom:1px solid #263449;overflow-wrap:anywhere}.chatline:last-child{border-bottom:0}.chatmessage{font-size:14px;line-height:1.45;white-space:pre-wrap}.chatauthor{display:block;margin-top:5px;font-size:10px;font-weight:700;color:var(--muted)}.chattime{display:block;margin-top:2px;font-size:9px;color:#718096}.community-actions{display:flex;gap:8px;flex-wrap:wrap}.community-actions button{flex:1}
+    footer{text-align:center;color:#718096;font-size:11px;padding:18px}
+    @media(max-width:600px){.grid{grid-template-columns:1fr}.page{padding:0 10px 25px}.hero{padding:17px}.hero h2{font-size:22px}.stats{gap:6px}.stat{padding:10px 7px}.stat strong{font-size:21px}.brand h1{font-size:17px}.logo{width:40px;height:40px}}
+
+    /* FINAL THEME: Matte Black + Burnt Orange (UI-only; JS/backend unchanged) */
+    :root{--bg:#0D0D0D;--panel:#191613;--panel2:#2A211A;--yellow:#F97316;--white:#F5F5F4;--muted:#BDB3AA;--green:#16A34A;--red:#B45309;--border:#4A3020}
+    body{background:#0D0D0D;color:#F5F5F4}
+    .topbar{background:#11100E;border-bottom:3px solid #F97316}
+    .logo{background:#3A2719;color:#FDBA74}
+    .brand p{color:#FDBA74}
+    .hero{background:linear-gradient(120deg,#191613,#241A13);border-color:#4A3020;border-left-color:#F97316}
+    .badge{background:#F97316;color:#17100B}
+    .card,.modalbox{background:#191613;border-color:#684020}
+    input,textarea,select{background:#100E0C;color:#F5F5F4;border-color:#684020}
+    label{color:#E7D8CB}
+    .primary{background:#F97316;color:#17100B}
+    .secondary{background:#292019;color:#F5EDE5;border:1px solid #684020}
+    .danger{background:#8A3925;color:#fff}
+    .success{background:#166534;color:#fff}
+    .tab{background:#211A15;color:#F5EDE5;border-color:#4A3020}
+    .tab.active{background:#F97316;color:#17100B}
+    .stat{background:#171411;border-color:#4A3020;border-bottom-color:#F97316}
+    .stat span,.muted,.hero p,.small{color:#BDB3AA}
+    .match{background:#171411;border-color:#684020}
+    .matchbar{background:#F97316}
+    .matchmeta{color:#E7D8CB}
+    .pill{background:#302319;color:#FDBA74}
+    .player{background:#20291F;color:#B6E3A3}
+    .player.out{background:#382018;color:#FDBA74}
+    .inbtn{background:#166534;color:#fff}
+    .outbtn{background:#8A3925;color:#fff}
+    .listitem,.galleryitem,.pending,.community-post{background:#171411;border-color:#4A3020}
+    .payment-table th{color:#FDBA74}
+    .payment-table th,.payment-table td{border-bottom-color:#4A3020}
+    .payment-table input[type=checkbox]{accent-color:#F97316}
+    .chatlog{background:#100E0C;border-color:#4A3020}
+    .chatline{border-bottom-color:#3B2A1E}
+    .chatauthor{color:#FDBA74}
+    .chattime{color:#9D8B7B}
+    .notice.error{background:#3B1913;color:#FED7AA;border-color:#9A3412}
+    .notice.success{background:#14251A;color:#BBF7D0;border-color:#166534}
+    .notice.info{background:#211A15;color:#F5EDE5;border:1px solid #4A3020}
+    .modal{background:#000D}
+    .modalbox{border-color:#F97316}
+    .close{background:#292019;color:#F5EDE5}
+    .pending{border-color:#F97316}
+    footer{color:#9D8B7B}
+    .iconbtn{background:#292019;color:#FDBA74;border:1px solid #684020}
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #FDBA74;outline-offset:2px}
+    @media(max-width:600px){.topbar{padding:11px}.hero{background:linear-gradient(120deg,#191613,#241A13)}}
+
+    /* ESPORTS UI REDESIGN — layout and component styling; existing IDs and JS preserved */
+    :root{--bg:#0D0D0D;--panel:#171411;--panel2:#211A15;--yellow:#F97316;--white:#F5F5F4;--muted:#BDB3AA;--green:#22C55E;--red:#C2410C;--border:#3B2A1E}
+    body{background:radial-gradient(ellipse at 50% -18%,#382012 0%,#15110E 34%,#0D0D0D 68%);background-attachment:fixed;min-height:100vh;letter-spacing:.1px}
+    .topbar{background:rgba(13,13,13,.94);backdrop-filter:blur(14px);border-bottom:1px solid #693713;box-shadow:0 8px 30px #0008;padding:12px 18px}
+    .topinner{max-width:1180px}.logo{width:52px;height:52px;border:1px solid #F97316;border-radius:15px;background:linear-gradient(145deg,#301b0e,#15110e);box-shadow:0 0 22px #F9731625;font-size:26px!important}
+    .brand h1{font-size:22px;font-weight:1000;letter-spacing:2.5px;text-shadow:0 2px 14px #F9731625}.brand p{font-size:9px;letter-spacing:2px;color:#FB923C}
+    .page{max-width:1180px;margin:26px auto;padding:0 20px 55px}
+    .hero{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(112deg,#1B1713 0%,#21170F 55%,#120F0C 100%);border:1px solid #4B2D1B;border-left:4px solid #F97316;border-radius:20px;padding:30px 28px;margin-bottom:20px;box-shadow:0 18px 44px #0005}
+    .hero:after{content:'⚽';position:absolute;z-index:-1;right:24px;top:50%;transform:translateY(-50%) rotate(-16deg);font-size:112px;opacity:.055;pointer-events:none}
+    .hero h2{font-size:clamp(25px,3vw,36px);font-weight:950;letter-spacing:-.8px;line-height:1.1;margin:14px 0 9px}.hero p{max-width:620px;font-size:14px;margin:0}
+    .badge{background:#F97316;color:#17100B;border-radius:5px;padding:6px 9px;font-size:9px;letter-spacing:1.4px;box-shadow:0 4px 16px #F9731625}
+    .card{background:linear-gradient(145deg,#191613,#14110F);border:1px solid #38271B;border-radius:17px;padding:21px;margin-bottom:17px;box-shadow:0 12px 28px #0003;transition:border-color .18s,transform .18s}
+    .card h3{font-size:17px;font-weight:900;letter-spacing:.2px}.card h4{font-weight:850}
+    #loginView>.card{max-width:590px;margin:0 auto 18px;padding:27px}
+    .grid{gap:12px}.stats{gap:12px;margin:18px 0 22px}.stat{position:relative;overflow:hidden;background:linear-gradient(145deg,#1C1814,#12100E);border:1px solid #3B2A1E;border-bottom:2px solid #F97316;border-radius:15px;padding:18px 17px;box-shadow:0 10px 24px #0003}
+    .stat:after{content:'';position:absolute;right:-15px;top:-22px;width:70px;height:70px;border:1px solid #F9731617;border-radius:50%}.stat strong{font-size:30px;font-weight:950;line-height:1.1;color:#FFF7ED}.stat span{display:block;margin-top:8px;font-size:9px;letter-spacing:1.3px;color:#BDB3AA}
+    button{border-radius:9px;min-height:42px;letter-spacing:.35px;font-size:12px;transition:transform .15s,filter .15s,box-shadow .15s}button:hover{filter:brightness(1.09);transform:translateY(-1px)}button:active{transform:translateY(0)}
+    .primary{background:linear-gradient(135deg,#FB923C,#F97316);color:#1B1008;box-shadow:0 5px 15px #F9731620}.secondary{background:#241B14;color:#F5EDE5;border:1px solid #4B3020}.success{background:#173522;border:1px solid #28583A}.danger{background:#3B1913;border:1px solid #7F2D18}
+    input,textarea,select{background:#100E0C;border:1px solid #493020;border-radius:9px;padding:13px;color:#F5F5F4;outline:none;transition:border-color .15s,box-shadow .15s}input:focus,textarea:focus,select:focus{border-color:#F97316;box-shadow:0 0 0 3px #F973161A}label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#D6C5B7}
+    .tabs,.admin-tabs{gap:7px;padding:7px;margin:18px 0 20px;border:1px solid #332419;border-radius:13px;background:#12100E;scrollbar-width:thin}
+    .tab{border-radius:8px;border:1px solid transparent;background:transparent;color:#BDB3AA;padding:11px 15px;font-size:10px;letter-spacing:.7px;font-weight:900}.tab.active{background:#F97316;color:#1B1008;box-shadow:0 4px 16px #F9731625}
+    .match{display:grid;grid-template-columns:5px minmax(0,1fr);background:linear-gradient(145deg,#1B1713,#12100E);border:1px solid #49301E;border-radius:17px;margin-bottom:17px;box-shadow:0 13px 30px #0004;transition:border-color .2s,transform .2s}.match:hover{border-color:#A94E1B;transform:translateY(-2px)}.matchbar{height:100%;min-height:100%;background:linear-gradient(180deg,#FB923C,#C2410C)}.matchbody{padding:22px 23px;min-width:0}.match h3{font-size:21px;font-weight:950;letter-spacing:-.3px;margin:13px 0}.matchmeta{font-size:12px;line-height:1.9;color:#D6C5B7;padding:12px 14px;margin:12px 0;background:#100E0C;border:1px solid #332419;border-radius:10px}.pill{background:#2B1B10;color:#FDBA74;border:1px solid #59351C;border-radius:6px;padding:7px 10px;font-size:10px;letter-spacing:.5px}.response{gap:10px;margin:17px 0}.inbtn{background:#173522;color:#D1FAE5;border:1px solid #28643F}.outbtn{background:#3B1913;color:#FED7AA;border:1px solid #7F2D18}.players{gap:7px;margin:10px 0}.player{background:#1B3020;color:#C4F0CB;border:1px solid #2C5132;border-radius:6px;font-size:10px;padding:7px 9px}.player.out{background:#321A12;color:#FDBA74;border-color:#69351C}.match details{margin-top:12px;padding-top:12px;border-top:1px solid #332419}.match summary{font-size:11px;font-weight:800;color:#FDBA74;cursor:pointer}
+    .listitem,.galleryitem,.pending,.community-post{background:#171411;border:1px solid #3B2A1E;border-radius:13px;padding:15px;margin:10px 0}.listitem h4{font-size:14px}.listactions{gap:8px}.gallerygrid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.galleryitem img{border:1px solid #3B2A1E;border-radius:9px;max-height:280px}.chatlog{max-height:420px;background:#100E0C;border:1px solid #3B2A1E;border-radius:13px;padding:12px}.chatline{padding:13px 10px;border-bottom:1px solid #302218}.chatmessage{font-size:13px;color:#F5EDE5}.chatauthor{font-size:9px;letter-spacing:.5px;color:#FB923C}.chattime{font-size:9px;color:#8C7A6C}.payment-table{border:1px solid #3B2A1E;border-radius:10px;overflow:hidden}.payment-table th{background:#21170F;color:#FDBA74}.payment-table th,.payment-table td{border-bottom:1px solid #332419}.payment-table input[type=checkbox]{accent-color:#F97316}
+    .modal{backdrop-filter:blur(7px);background:#000D}.modalbox{background:#171411;border:1px solid #F97316;border-radius:18px;box-shadow:0 25px 80px #000B;padding:24px}.close{min-height:32px;border-radius:8px}
+    .notice{border-radius:10px;font-size:13px}.notice.info{background:#21170F;border:1px solid #55331B;color:#F5EDE5}.notice.error{background:#32150F;color:#FED7AA;border-color:#7F2D18}.notice.success{background:#14251A;color:#BBF7D0;border-color:#28583A}
+    footer{border-top:1px solid #2A1D14;margin-top:25px;color:#88796D;letter-spacing:1px}
+    @media(min-width:900px){#matchList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:start}#matchList .match{margin-bottom:0;height:100%}}
+    @media(max-width:700px){.page{padding:0 12px 35px;margin:16px auto}.topbar{padding:10px 12px}.topinner{gap:10px}.logo{width:43px;height:43px;border-radius:12px}.brand h1{font-size:18px;letter-spacing:2px}.brand p{font-size:8px;letter-spacing:1px}.hero{padding:23px 18px;border-radius:15px}.hero:after{font-size:78px;right:8px}.hero h2{font-size:25px;max-width:80%}.stats{gap:7px}.stat{padding:13px 10px;border-radius:11px}.stat strong{font-size:23px}.stat span{font-size:8px;letter-spacing:.5px}.card{padding:16px;border-radius:14px}.tabs,.admin-tabs{margin:14px -2px 17px;padding:5px;border-radius:10px}.tab{padding:10px 12px;font-size:9px}.match{grid-template-columns:4px minmax(0,1fr);border-radius:13px}.matchbody{padding:16px 13px}.match h3{font-size:19px}.matchmeta{font-size:11px;padding:10px}.response{gap:7px}.response button{padding:11px 5px;font-size:10px}.gallerygrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.galleryitem{padding:9px}.modalbox{padding:19px}}
+    @media(max-width:390px){.brand h1{font-size:16px}.brand p{font-size:7px}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat strong{font-size:20px}.stat span{font-size:7px}.gallerygrid{grid-template-columns:1fr}}
+
+  
+    /* Notification center: matte black + burnt orange */
+    .notification-wrap{position:relative;display:flex;align-items:center}
+    .notification-bell{position:relative}
+    .notification-bell svg{width:21px;height:21px}
+    .notification-count{position:absolute;right:-5px;top:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#EF4444;color:#fff;border:2px solid #11100E;font-size:10px;font-weight:900;display:grid;place-items:center;line-height:1}
+    .notification-panel{position:absolute;right:0;top:calc(100% + 12px);width:min(350px,calc(100vw - 28px));max-height:65vh;overflow:auto;z-index:80;background:#171411;border:1px solid #F97316;border-radius:14px;box-shadow:0 18px 50px #000B;padding:12px}
+    .notification-head{display:flex;align-items:center;justify-content:space-between;padding:3px 2px 10px;border-bottom:1px solid #3B2A1E;color:#FDBA74;font-size:11px;letter-spacing:1px}
+    .notification-close{background:transparent;color:#BDB3AA;padding:0;min-height:26px;width:28px;font-size:22px}
+    .notification-item{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#211A15;color:#F5EDE5;border:1px solid #3B2A1E;border-radius:10px;padding:11px;margin-top:9px;letter-spacing:0;font-size:12px;font-weight:600;line-height:1.45}
+    .notification-item:hover{border-color:#F97316}
+    .notification-symbol{width:28px;height:28px;flex:0 0 28px;border-radius:8px;background:#3A2113;color:#FDBA74;display:grid;place-items:center;font-size:14px}
+    .notification-copy{display:block;min-width:0;overflow-wrap:anywhere}.notification-copy small{display:block;color:#A89A8D;font-size:10px;font-weight:500;margin-top:3px}
+    .notification-empty{color:#BDB3AA;text-align:center;padding:16px 8px;font-size:12px}
+    @media(max-width:600px){.notification-panel{right:-48px;top:calc(100% + 10px)}.notification-count{right:-4px}}
+
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topinner">
+    <div class="logo" style="display:grid;place-items:center">⚽</div>
+    <div class="brand"><h1>TEAM SNAP</h1><p>FOOTBALL MANAGER • EST. 2017</p></div>
+    <div class="navicons">
+      <div id="notificationWrap" class="notification-wrap hidden">
+        <button id="notificationBell" class="secondary iconbtn notification-bell" type="button" title="Notifications" aria-label="Notifications" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+          <span id="notificationCount" class="notification-count hidden">0</span>
+        </button>
+        <div id="notificationPanel" class="notification-panel hidden" role="dialog" aria-label="Notifications">
+          <div class="notification-head"><strong>NOTIFICATIONS</strong><button id="closeNotifications" type="button" class="notification-close" aria-label="Close notifications">×</button></div>
+          <div id="notificationList"><p class="notification-empty">You're all caught up.</p></div>
+        </div>
+      </div>
+      <button id="refreshTop" class="secondary iconbtn hidden" type="button" title="Refresh data" aria-label="Refresh data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.8 9A7.5 7.5 0 0 1 18 6l2 6M4 17v-5h5"/><path d="M19.2 15A7.5 7.5 0 0 1 6 18l-2-6"/></svg></button>
+      <button id="logoutTop" class="secondary iconbtn hidden" type="button" title="Log out" aria-label="Log out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div id="message" class="hidden" role="status"></div>
+
+  <section id="authView">
+    <div class="hero">
+      <span class="badge">TEAM SNAP • MATCH CENTER</span>
+      <h2>One Team. One Goal.</h2>
+      <p>Register once, confirm availability and follow your squad.</p>
+    </div>
+    <div class="card">
+      <h3>Player Login</h3>
+      <form id="loginForm">
+        <label for="loginPhone">Registered 10-digit phone number</label>
+        <input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" required placeholder="Enter phone number">
+        <button class="primary full" type="submit">LOGIN TO TEAM</button>
+      </form>
+      <div class="grid">
+        <button id="openRegister" class="primary full" type="button">📝 REGISTER IN APP</button>
+        <button id="joinWhatsAppGroup" class="success full hidden" type="button">🟢 JOIN WHATSAPP GROUP</button>
+        <button id="openAdmin" class="secondary full" type="button">ADMIN LOGIN</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="playerView" class="hidden">
+    <div class="hero"><span class="badge">PLAYER DASHBOARD</span><h2 id="welcomeName">Welcome</h2><p>Confirm your availability and follow your squad.</p></div>
+    <div class="stats">
+      <div class="stat"><strong id="statIn">0</strong><span>MY IN DATES</span></div>
+      <div class="stat"><strong id="statPolls">0</strong><span>ACTIVE POLLS</span></div>
+      <div class="stat"><strong id="statLatest">0</strong><span>LATEST IN</span></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="matches">MATCH POLLS</button>
+      <button class="tab" data-tab="community">💬 CHAT</button>
+      <button class="tab" data-tab="gallery">GALLERY</button>
+      <button class="tab" data-tab="myHistory">MY HISTORY</button>
+      <button class="tab" data-tab="teamHistory">TEAM HISTORY</button>
+    </div>
+    <div id="matchesPanel"><div id="matchesList"></div></div>
+    <div id="myHistoryPanel" class="hidden"><div class="card"><h3>My Attendance History</h3><div id="myHistoryList"></div></div></div>
+    <div id="teamHistoryPanel" class="hidden"><div class="card"><h3>Team History</h3><div id="teamHistoryList"></div></div></div>
+    <div id="galleryPanel" class="hidden"><div class="card"><h3>Team Gallery</h3><div id="playerGallery" class="gallerygrid"></div></div></div>
+    <div id="communityPanel" class="hidden">
+      <div class="card"><h3>💬 Team Chat</h3><p class="small">Messages shared with registered Team SNAP players.</p>
+        <div id="communityChat" class="chatlog" aria-live="polite"></div>
+        <form id="communityChatForm"><label for="communityChatInput">Your message</label><input id="communityChatInput" maxlength="1000" required placeholder="Type a message for the team..."><button class="primary full" type="submit">➤ SEND MESSAGE</button></form>
+      </div>
+    </div>
+  </section>
+
+  <section id="adminView" class="hidden">
+    <div class="hero"><span class="badge">ADMIN CONTROL ROOM</span><h2>Manage The Squad</h2><p>Each admin function has its own tab for easier management.</p></div>
+    <div class="stats">
+      <div class="stat"><strong id="adminUsers">0</strong><span>REGISTERED PLAYERS</span></div>
+      <div class="stat"><strong id="adminPolls">0</strong><span>MATCH POLLS</span></div>
+      <div class="stat"><strong id="adminIn">0</strong><span>LATEST IN</span></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="tab active" data-admin-tab="createPollPanel">CREATE MATCH POLL</button>
+      <button class="tab" data-admin-tab="registeredPlayersPanel">REGISTERED PLAYERS</button>
+      <button class="tab" data-admin-tab="managePollsPanel">MANAGE POLLS / PAYMENTS</button>
+      <button class="tab" data-admin-tab="galleryAdminPanel">GALLERY ITEMS</button>
+    </div>
+    <div id="createPollPanel" class="admin-panel">
+      <div class="card"><h3 id="pollFormHeading">Create Match Poll</h3>
+        <form id="pollForm">
+          <input id="pollEditId" type="hidden" value="">
+          <label for="pollDate">Match date</label><input id="pollDate" type="date" required>
+          <label for="pollTitle">Match title</label><input id="pollTitle" maxlength="100" placeholder="Saturday football match">
+          <label for="pollVenue">Match venue</label><input id="pollVenue" maxlength="200" required placeholder="Ground / location">
+          <label for="pollNote">Note / instructions</label><textarea id="pollNote" maxlength="500"></textarea>
+          <button id="pollSubmitButton" class="primary full" type="submit">CREATE MATCH POLL</button>
+          <button id="cancelPollEdit" class="secondary full hidden" type="button">CANCEL EDIT</button>
+        </form>
+        <a id="whatsappLink" class="hidden" target="_blank" rel="noopener" style="display:block;margin-top:12px;color:#86efac">SHARE POLL ON WHATSAPP</a>
+      </div>
+    </div>
+    <div id="registeredPlayersPanel" class="admin-panel hidden"><div class="card"><h3>Registered Players</h3><div id="usersList"></div></div></div>
+    <div id="managePollsPanel" class="admin-panel hidden"><div class="card"><h3>Manage Published Polls & Payments</h3><div id="adminPollList"></div></div></div>
+    <div id="galleryAdminPanel" class="admin-panel hidden">
+      <div class="card"><h3>Publish Gallery Item</h3>
+        <p class="small">For photos, use a publicly accessible image URL. YouTube URLs are also supported.</p>
+        <form id="galleryForm">
+          <label for="galleryTitle">Title</label><input id="galleryTitle" required maxlength="100">
+          <label for="galleryType">Type</label><select id="galleryType"><option value="PHOTO">Photo URL</option><option value="VIDEO">YouTube video</option></select>
+          <label for="galleryUrl">Image URL or YouTube URL</label><input id="galleryUrl" type="url" required>
+          <label for="galleryDesc">Caption</label><textarea id="galleryDesc" maxlength="500"></textarea>
+          <button class="primary full" type="submit">PUBLISH GALLERY ITEM</button>
+        </form>
+      </div>
+      <div class="card"><h3>Published Gallery Items</h3><div id="adminGallery" class="gallerygrid"></div></div>
+    </div>
+  </section>
+
+  <div id="registerModal" class="modal hidden">
+    <div class="modalbox">
+      <button class="close" data-close="registerModal" type="button">×</button>
+      <h3>New Player Registration</h3>
+      <form id="registerForm">
+        <label for="regName">Full name</label><input id="regName" maxlength="70" required>
+        <label for="regPhone">10-digit phone number</label><input id="regPhone" type="tel" inputmode="numeric" maxlength="10" required>
+        <button class="primary full" type="submit">CREATE PLAYER ACCOUNT</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminModal" class="modal hidden">
+    <div class="modalbox">
+      <button class="close" data-close="adminModal" type="button">×</button>
+      <h3>Admin Login</h3>
+      <form id="adminLoginForm">
+        <label for="adminId">Admin ID</label><input id="adminId" required>
+        <label for="adminPassword">Password</label><input id="adminPassword" type="password" required>
+        <button class="primary full" type="submit">ADMIN LOGIN</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="pendingModal" class="modal hidden">
+    <div class="modalbox">
+      <h3 style="color:#facc15">Your Match Fees Are Pending</h3>
+      <p id="pendingSummary" class="muted"></p>
+      <div id="pendingList"></div>
+      <button id="closePending" class="primary full" type="button">OK, GOT IT</button>
+    </div>
+  </div>
+</main>
+<footer>TEAM SNAP FOOTBALL • BUILT FOR THE SQUAD</footer>
+
+<script>
+'use strict';
+
+document.addEventListener('DOMContentLoaded', function () {
+  const $ = id => document.getElementById(id);
+  let playerPhone = '';
+  let playerData = null;
+  let adminCredentials = null;
+  let adminData = null;
+  let notificationPolls = [];
+  let notificationGallery = [];
+  let notificationChat = [];
+  let notificationPollTimer = null;
+  let notificationStoreKey = '';
+  let notificationSeen = { polls: [], gallery: [], chat: [] };
+  let notificationInitialized = { polls: false, gallery: false, chat: false };
+
+  function readNotificationState() {
+    try { const raw=localStorage.getItem(notificationStoreKey); if(raw){const parsed=JSON.parse(raw); notificationSeen={polls:Array.isArray(parsed.polls)?parsed.polls:[],gallery:Array.isArray(parsed.gallery)?parsed.gallery:[],chat:Array.isArray(parsed.chat)?parsed.chat:[]}; notificationInitialized={polls:!!parsed.pollsInit,gallery:!!parsed.galleryInit,chat:!!parsed.chatInit};} }
+    catch(e) { console.warn('Notifications are using session-only state.',e); }
+  }
+  function saveNotificationState() {
+    try { localStorage.setItem(notificationStoreKey,JSON.stringify({...notificationSeen,pollsInit:notificationInitialized.polls,galleryInit:notificationInitialized.gallery,chatInit:notificationInitialized.chat})); }
+    catch(e) { console.warn('Could not save notification read state.',e); }
+  }
+  // Use a stable fallback key too, so chat items still notify if a backend row lacks an id.
+  function notificationItemId(x) {
+    if (x && x.id != null && String(x.id).trim() !== '') return String(x.id);
+    return [x && (x.createdAt || x.timestamp || x.date || ''), x && (x.author || x.name || x.userId || ''), x && (x.message || x.text || x.title || '')].map(v=>String(v||'').trim()).join('|');
+  }
+  function idsOf(items) { return (items||[]).map(notificationItemId).filter(v=>v && v!=='||'); }
+  function unseen(items, seen) { const set=new Set((seen||[]).map(v=>String(v))); return (items||[]).filter(x=>!set.has(notificationItemId(x))); }
+  function markSeen(type, items) {
+    notificationSeen[type]=Array.from(new Set([...(notificationSeen[type]||[]),...idsOf(items)])).slice(-500);
+    notificationInitialized[type]=true; saveNotificationState(); renderNotificationCenter();
+  }
+  function refreshNotificationCenter() {
+    const pendingPolls=(playerData&&playerData.polls||[]).filter(p=>p.active && !p.myStatus);
+    const newPolls=notificationInitialized.polls ? unseen(pendingPolls,notificationSeen.polls) : [];
+    const newGallery=notificationInitialized.gallery ? unseen(notificationGallery,notificationSeen.gallery) : [];
+    const newChat=notificationInitialized.chat ? unseen(notificationChat,notificationSeen.chat) : [];
+    const events=[];
+    newPolls.forEach(p=>events.push({type:'polls',id:notificationItemId(p),icon:'⚽',text:'New poll added: '+(p.title||'Match poll'),sub:'Tap to open Match Polls'}));
+    if(newChat.length) events.push({type:'chat',id:'chat-batch',icon:'💬',text:newChat.length+' new chat message'+(newChat.length===1?'':'s'),sub:'Tap to open Chat'});
+    newGallery.forEach(g=>events.push({type:'gallery',id:notificationItemId(g),icon:'🖼️',text:'New post added in Gallery: '+(g.title||'New media'),sub:'Tap to open Gallery'}));
+    renderNotificationCenter(events);
+  }
+  function renderNotificationCenter(events) {
+    if(events===undefined){
+      const pendingPolls=(playerData&&playerData.polls||[]).filter(p=>p.active && !p.myStatus);
+      events=[];
+      if(notificationInitialized.polls) unseen(pendingPolls,notificationSeen.polls).forEach(p=>events.push({type:'polls',id:notificationItemId(p),icon:'⚽',text:'New poll added: '+(p.title||'Match poll'),sub:'Tap to open Match Polls'}));
+      if(notificationInitialized.chat){const c=unseen(notificationChat,notificationSeen.chat);if(c.length)events.push({type:'chat',id:'chat-batch',icon:'💬',text:c.length+' new chat message'+(c.length===1?'':'s'),sub:'Tap to open Chat'});}
+      if(notificationInitialized.gallery)unseen(notificationGallery,notificationSeen.gallery).forEach(g=>events.push({type:'gallery',id:notificationItemId(g),icon:'🖼️',text:'New post added in Gallery: '+(g.title||'New media'),sub:'Tap to open Gallery'}));
+    }
+    const wrap=$('notificationWrap'); if(!wrap)return;
+    const count=events.length; $('notificationCount').textContent=count>99?'99+':String(count); $('notificationCount').classList.toggle('hidden',count===0);
+    $('notificationList').innerHTML=count?events.map((n,i)=>`<button type="button" class="notification-item" data-notification-type="${esc(n.type)}" data-notification-id="${esc(n.id)}"><span class="notification-symbol">${n.icon}</span><span class="notification-copy">${esc(n.text)}<small>${esc(n.sub)}</small></span></button>`).join(''):"<p class=\"notification-empty\">You\'re all caught up.</p>";
+    $('notificationList').querySelectorAll('[data-notification-type]').forEach(b=>b.addEventListener('click',()=>openNotification(b.dataset.notificationType,b.dataset.notificationId)));
+  }
+  function openNotification(type,id) {
+    $('notificationPanel').classList.add('hidden'); $('notificationBell').setAttribute('aria-expanded','false');
+    if(type==='polls') { document.querySelector('[data-tab="matches"]').click(); }
+    if(type==='chat') { markSeen('chat',notificationChat); document.querySelector('[data-tab="community"]').click(); }
+    if(type==='gallery') { markSeen('gallery',notificationGallery); document.querySelector('[data-tab="gallery"]').click(); }
+  }
+  function loadNotificationChat(silent) {
+    if(!playerPhone)return;
+    call('getCommunityData',[playerPhone],data=>{
+      notificationChat=(data&&data.chat)||[];
+      if(!notificationInitialized.chat){notificationSeen.chat=[];notificationInitialized.chat=true;saveNotificationState();}
+      renderNotificationCenter();
+      if(!silent && document.querySelector('[data-tab="community"]').classList.contains('active')) renderCommunity(data);
+    },null);
+  }
+  function startNotificationPolling() {
+    if(notificationPollTimer)clearInterval(notificationPollTimer);
+    notificationPollTimer=setInterval(()=>{
+      if(!playerPhone || !playerData)return;
+      // Re-read data to discover new polls, gallery items and chat messages.
+      call('getDashboard',[playerPhone],data=>{
+        playerData=data; notificationPolls=data.polls||[];
+        if(!notificationInitialized.polls){notificationSeen.polls=[];notificationInitialized.polls=true;saveNotificationState();}
+        loadPlayerGallery(true); loadNotificationChat(true); refreshNotificationCenter();
+      },null);
+    },30000);
+  }
+
+  function message(text,type='info') {
+    const el=$('message');
+    el.className='notice '+type;
+    el.textContent=String(text||'');
+    el.classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function clearMessage(){ $('message').classList.add('hidden'); }
+  function esc(v) {
+    return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function busy(btn,on,label) {
+    if(!btn)return;
+    if(on){btn.dataset.oldText=btn.textContent;btn.textContent=label||'PLEASE WAIT...';btn.disabled=true;}
+    else{btn.textContent=btn.dataset.oldText||btn.textContent;btn.disabled=false;}
+  }
+  function call(method,args,success,button) {
+    busy(button,true);
+    try {
+      if(!google || !google.script || !google.script.run) throw new Error('Open the deployed Apps Script /exec URL, not the editor preview.');
+      google.script.run
+        .withSuccessHandler(result=>{busy(button,false);try{success&&success(result);}catch(e){message('Page error: '+e.message,'error');console.error(e);}})
+        .withFailureHandler(err=>{busy(button,false);message(err&&err.message?err.message:String(err),'error');console.error(method,err);})
+        [method](...args);
+    } catch(e) {busy(button,false);message(e.message,'error');console.error(e);}
+  }
+  function showView(id) {
+    ['authView','playerView','adminView'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
+    $('logoutTop').classList.toggle('hidden',id==='authView');
+    $('refreshTop').classList.toggle('hidden',id==='authView');
+    $('notificationWrap').classList.toggle('hidden',id!=='playerView');
+    if(id==='authView' && notificationPollTimer){clearInterval(notificationPollTimer);notificationPollTimer=null;}
+    clearMessage();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function openModal(id){$(id).classList.remove('hidden');}
+  function closeModal(id){$(id).classList.add('hidden');}
+
+  $('notificationBell').addEventListener('click',()=>{
+    const panel=$('notificationPanel'); const opening=panel.classList.contains('hidden');
+    panel.classList.toggle('hidden',!opening); $('notificationBell').setAttribute('aria-expanded',String(opening));
+    if(opening)renderNotificationCenter();
+  });
+  $('closeNotifications').addEventListener('click',()=>{$('notificationPanel').classList.add('hidden');$('notificationBell').setAttribute('aria-expanded','false');});
+  document.addEventListener('click',e=>{if(!$('notificationWrap').contains(e.target)){$('notificationPanel').classList.add('hidden');$('notificationBell').setAttribute('aria-expanded','false');}});
+
+  $('openRegister').addEventListener('click',()=>openModal('registerModal'));
+  $('joinWhatsAppGroup').addEventListener('click',()=>{
+    const url=$('joinWhatsAppGroup').dataset.url||'';
+    if(url.startsWith('https://chat.whatsapp.com/')) window.open(url,'_blank','noopener');
+    else message('WhatsApp Group invite link has not been configured yet.','info');
+  });
+  call('getJoinLinks',[],info=>{
+    const btn=$('joinWhatsAppGroup');
+    if(info&&info.groupInviteUrl){btn.dataset.url=info.groupInviteUrl;btn.classList.remove('hidden');}
+  });
+  $('openAdmin').addEventListener('click',()=>openModal('adminModal'));
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+  document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden'));});
+
+  $('registerForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const name=$('regName').value.trim(),phone=$('regPhone').value.replace(/\D/g,'');
+    if(!name||!/^\d{10}$/.test(phone)){message('Enter name and valid 10-digit phone number.','error');return;}
+    call('registerPlayer',[name,phone],r=>{
+      closeModal('registerModal');$('loginPhone').value=phone;$('registerForm').reset();
+      message(r.message||'Registration successful.','success');
+    },e.submitter);
+  });
+
+  $('loginForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const phone=$('loginPhone').value.replace(/\D/g,'');
+    if(!/^\d{10}$/.test(phone)){message('Enter valid 10-digit phone number.','error');return;}
+    call('loginPlayer',[phone],()=>{
+      playerPhone=phone;
+      notificationStoreKey='teamSnapNotifications:'+phone;
+      notificationSeen={polls:[],gallery:[],chat:[]};notificationInitialized={polls:false,gallery:false,chat:false};
+      readNotificationState();
+      loadPlayer();
+    },e.submitter);
+  });
+
+  $('adminLoginForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const id=$('adminId').value.trim(),password=$('adminPassword').value;
+    call('adminLogin',[id,password],()=>{
+      adminCredentials={id,password};closeModal('adminModal');loadAdmin();
+    },e.submitter);
+  });
+
+  function loadPlayer(){
+    call('getDashboard',[playerPhone],data=>{
+      playerData=data;
+      $('welcomeName').textContent='Welcome, '+(data.user&&data.user.name||'Player')+'!';
+      $('statIn').textContent=data.totalIn||0;
+      $('statPolls').textContent=(data.polls||[]).length;
+      $('statLatest').textContent=data.polls&&data.polls[0]?data.polls[0].inCount:0;
+      notificationPolls=data.polls||[];
+      if(!notificationInitialized.polls){notificationSeen.polls=[];notificationInitialized.polls=true;saveNotificationState();}
+      renderMatches();renderMyHistory();showView('playerView');renderPending(data);
+      loadTeamHistory();loadPlayerGallery();loadNotificationChat(true);refreshNotificationCenter();startNotificationPolling();
+    });
+  }
+
+  function renderMatches(){
+    const list=$('matchesList'),polls=playerData&&playerData.polls||[];
+    if(!polls.length){list.innerHTML='<div class="card">No active match polls right now.</div>';return;}
+    list.innerHTML=polls.map(p=>`
+      <article class="match"><div class="matchbar"></div><div class="matchbody">
+        <span class="badge">${p.active?'ACTIVE':'INACTIVE'}</span>
+        <h3>${esc(p.title)}</h3><div class="matchmeta">📅 ${esc(p.date)}<br>📍 ${esc(p.venue||'Venue not specified')}<br>📝 ${esc(p.note||'No additional notes')}</div>
+        <div class="pill">${Number(p.inCount)||0} IN</div><div class="pill">${Number(p.outCount)||0} OUT</div>
+        <p>Your response: <b>${esc(p.myStatus||'Not submitted')}</b></p>
+        <div class="response">
+          <button class="inbtn" data-response="${esc(p.id)}" data-status="IN">✓ I'M IN</button>
+          <button class="outbtn" data-response="${esc(p.id)}" data-status="OUT">✕ I'M OUT</button>
+        </div>
+        ${p.myStatus==='IN'&&p.active?`<button class="secondary full" type="button" data-manage-guests="${esc(p.id)}">➕ ADD PLAYERS (${(p.myGuestPlayers||[]).length})</button><div class="players">${(p.myGuestPlayers||[]).map(g=>`<span class="player">${esc(g.name)} <button type="button" class="danger" style="padding:3px 6px;margin-left:4px" data-remove-guest="${esc(p.id)}" data-guest-id="${esc(g.id)}">×</button></span>`).join('')}</div>`:''}
+        <button class="secondary full" type="button" data-player-share="${esc(p.id)}">📲 SHARE POLL ON WHATSAPP</button>
+        <b>Available players (${Number(p.inCount)||0})</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'<span class="small">No responses yet.</span>'}</div>
+        <details><summary>View OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'No OUT responses.'}</div></details>
+        <p class="small">Contribution: ${esc(p.myContributionStatus||'UNPAID')}</p>
+      </div></article>`).join('');
+    list.querySelectorAll('[data-response]').forEach(b=>b.addEventListener('click',()=>{
+      call('submitResponse',[playerPhone,b.dataset.response,b.dataset.status],data=>{
+        playerData=data;renderMatches();renderMyHistory();
+        const responded=(data.polls||[]).find(p=>String(p.id)===String(b.dataset.response));if(responded)markSeen('polls',[responded]);
+        $('statIn').textContent=data.totalIn||0;
+        $('statPolls').textContent=(data.polls||[]).length;
+        $('statLatest').textContent=data.polls&&data.polls[0]?data.polls[0].inCount:0;
+        renderPending(data);loadTeamHistory();refreshNotificationCenter();message('Your response was saved.','success');
+      },b);
+    }));
+    list.querySelectorAll('[data-manage-guests]').forEach(b=>b.addEventListener('click',()=>{
+      const pollId=b.dataset.manageGuests;
+      const countRaw=prompt('How many additional players? (1-20)');
+      if(countRaw===null)return;
+      const count=Number(countRaw);
+      if(!Number.isInteger(count)||count<1||count>20){message('Enter a number from 1 to 20.','error');return;}
+      const names=[];
+      for(let i=1;i<=count;i++){
+        const name=prompt('Name of additional player '+i+' (required):');
+        if(name===null)return;
+        if(!name.trim()){message('Every player name is compulsory.','error');return;}
+        names.push(name.trim());
+      }
+      call('addGuestPlayers',[playerPhone,pollId,names],result=>{loadPlayer();message(result.message||'Additional players added.','success');},b);
+    }));
+    list.querySelectorAll('[data-remove-guest]').forEach(b=>b.addEventListener('click',()=>{
+      if(!confirm('Remove this additional player?'))return;
+      call('removeGuestPlayer',[playerPhone,b.dataset.removeGuest,b.dataset.guestId],result=>{loadPlayer();message(result.message||'Player removed.','success');},b);
+    }));
+
+    list.querySelectorAll('[data-player-share]').forEach(b=>b.addEventListener('click',()=>{
+      call('playerGetPollWhatsAppUrl',[playerPhone,b.dataset.playerShare],result=>{
+        const url=result&&result.whatsappUrl;
+        if(!url||!url.startsWith('https://wa.me/')){message('Unable to create WhatsApp share link.','error');return;}
+        window.open(url,'_blank','noopener');
+      },b);
+    }));
+  }
+
+  function renderMyHistory(){
+    const h=playerData&&playerData.myHistory||[];
+    $('myHistoryList').innerHTML=h.length?h.map(p=>`<div class="listitem"><h4>${esc(p.title)}</h4><span class="muted">${esc(p.date)}</span></div>`).join(''):'<p class="muted">Your IN history will appear here.</p>';
+  }
+  function loadTeamHistory(){
+    if(!playerPhone)return;
+    call('getTeamHistory',[playerPhone],data=>{
+      $('teamHistoryList').innerHTML=data.length?data.map(p=>`<div class="listitem"><h4>${esc(p.title)} — ${esc(p.date)}</h4><p>${p.inCount} IN (${p.registeredInCount||0} registered + ${p.guestInCount||0} additional) · ${p.outCount} OUT · ${p.respondedCount} responded</p><b>IN players</b><div class="players">${(p.inPlayers||[]).map(n=>'<span class="player">'+esc(n)+'</span>').join('')||'None'}</div><details><summary>OUT players</summary><div class="players">${(p.outPlayers||[]).map(n=>'<span class="player out">'+esc(n)+'</span>').join('')||'None'}</div></details></div>`).join(''):'<p class="muted">No history available.</p>';
+    });
+  }
+  function renderPending(data){
+    const p=data.pendingPolls||[];
+    if(!p.length){closeModal('pendingModal');return;}
+    $('pendingSummary').textContent=p.length+' pending match contribution(s). Total amount: ₹'+(Number(data.totalPendingAmount)||0).toLocaleString('en-IN');
+    $('pendingList').innerHTML=p.map(x=>`<div class="pending"><b>${esc(x.title)}</b><p class="small">${esc(x.date)}</p>${Number(x.amount)>0?'Amount: ₹'+Number(x.amount).toLocaleString('en-IN'):'Amount not set'} <span class="pill">UNPAID</span></div>`).join('');
+    openModal('pendingModal');
+  }
+  $('closePending').addEventListener('click',()=>closeModal('pendingModal'));
+
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+    ['matches','community','gallery','myHistory','teamHistory'].forEach(t=>$(t+'Panel').classList.toggle('hidden',t!==b.dataset.tab));
+    if(b.dataset.tab==='teamHistory')loadTeamHistory();
+    if(b.dataset.tab==='gallery'){loadPlayerGallery();markSeen('gallery',notificationGallery);}
+    if(b.dataset.tab==='community'){loadCommunity();markSeen('chat',notificationChat);}
+  }));
+
+  $('pollForm').addEventListener('submit',function(e){
+    e.preventDefault();if(!adminCredentials)return message('Please login as admin again.','error');
+    const editId=$('pollEditId').value;
+    const fn=editId?'adminUpdatePoll':'adminCreatePoll';
+    const args=editId
+      ?[adminCredentials.id,adminCredentials.password,editId,$('pollDate').value,$('pollTitle').value,$('pollVenue').value,$('pollNote').value]
+      :[adminCredentials.id,adminCredentials.password,$('pollDate').value,$('pollTitle').value,$('pollVenue').value,$('pollNote').value];
+    call(fn,args,r=>{
+      if(!editId){$('pollForm').reset();$('whatsappLink').href=r.whatsappUrl||'#';$('whatsappLink').classList.remove('hidden');$('whatsappLink').textContent='📲 SHARE POLL ON WHATSAPP';}
+      else resetPollEditor();
+      message(r.message||(editId?'Poll updated.':'Poll created.'),'success');loadAdmin();
+      if(!editId)selectAdminTab('managePollsPanel');
+    },e.submitter);
+  });
+
+  function selectAdminTab(panelId){
+    document.querySelectorAll('[data-admin-tab]').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===panelId));
+    ['createPollPanel','registeredPlayersPanel','managePollsPanel','galleryAdminPanel'].forEach(id=>$(id).classList.toggle('hidden',id!==panelId));
+  }
+  document.querySelectorAll('[data-admin-tab]').forEach(b=>b.addEventListener('click',()=>selectAdminTab(b.dataset.adminTab)));
+  function resetPollEditor(){
+    $('pollForm').reset();$('pollEditId').value='';$('pollFormHeading').textContent='Create Match Poll';$('pollSubmitButton').textContent='CREATE MATCH POLL';$('cancelPollEdit').classList.add('hidden');$('whatsappLink').classList.add('hidden');
+  }
+  $('cancelPollEdit').addEventListener('click',resetPollEditor);
+
+  function loadAdmin(){
+    if(!adminCredentials)return;
+    call('adminGetData',[adminCredentials.id,adminCredentials.password],data=>{
+      adminData=data;
+      $('adminUsers').textContent=data.users.length;
+      $('adminPolls').textContent=data.polls.length;
+      $('adminIn').textContent=data.polls.length?data.polls[0].inCount:0;
+      renderAdminUsers();renderAdminPolls();loadAdminGallery();selectAdminTab('createPollPanel');showView('adminView');
+    });
+  }
+  function renderAdminUsers(){
+    const u=adminData.users||[];
+    $('usersList').innerHTML=u.length?u.map(x=>`<div class="listitem"><b>${esc(x.name)}</b><p class="small">Phone: ${esc(x.phone)}</p></div>`).join(''):'<p class="muted">No registered players.</p>';
+  }
+  function renderAdminPolls(){
+    const polls=adminData.polls||[];
+    $('adminPollList').innerHTML=polls.length?polls.map(p=>`
+      <div class="listitem">
+        <h4>${esc(p.title)}</h4>
+        <p class="small">${esc(p.date)} · Venue: ${esc(p.venue||'Not specified')} · ${p.active?'ACTIVE':p.enabled?'INACTIVE':'EXPIRED'}</p>
+        <p class="small">${esc(p.note||'')}</p>
+        <div class="pill">${p.inCount} IN</div><div class="pill">${p.registeredInCount||0} Registered</div><div class="pill">${p.guestInCount||0} Additional</div><div class="pill">${p.outCount} OUT</div><div class="pill">${p.yetToRespondCount} pending response</div>
+        <div class="listactions">
+          <button class="secondary" data-editpoll="${esc(p.id)}">EDIT POLL</button>
+          <button class="secondary" data-toggle="${esc(p.id)}" data-active="${!p.enabled}">${p.enabled?'DEACTIVATE':'REACTIVATE'}</button>
+          <button class="secondary" data-share="${esc(p.id)}">WHATSAPP</button>
+          <button class="danger" data-delete="${esc(p.id)}" data-title="${esc(p.title)}">DELETE</button>
+        </div>
+        <h4 style="margin-top:14px">Player Payment Status</h4>
+        <p class="small">Select Paid or Unpaid for each player, then save all changes together.</p>
+        <div style="overflow-x:auto"><table class="payment-table"><thead><tr><th>Player</th><th>Paid</th><th>Unpaid</th></tr></thead><tbody>
+          ${(p.paymentStatuses||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="checkcell"><input type="checkbox" aria-label="${esc(c.name)} paid" data-payment="${esc(p.id)}" data-user="${esc(c.userId)}" data-status="PAID" ${c.status==='PAID'?'checked':''}></td><td class="checkcell"><input type="checkbox" aria-label="${esc(c.name)} unpaid" data-payment="${esc(p.id)}" data-user="${esc(c.userId)}" data-status="UNPAID" ${c.status!=='PAID'?'checked':''}></td></tr>`).join('')}
+        </tbody></table></div>
+        <button class="primary full" data-savepayments="${esc(p.id)}">SAVE ALL PAYMENT STATUSES</button>
+      </div>`).join(''):'<p class="muted">No polls created yet.</p>';
+
+    $('adminPollList').querySelectorAll('[data-editpoll]').forEach(b=>b.addEventListener('click',()=>{
+      const p=(adminData.polls||[]).find(x=>x.id===b.dataset.editpoll);if(!p)return;
+      $('pollEditId').value=p.id;$('pollDate').value=p.date;$('pollTitle').value=p.title;$('pollVenue').value=p.venue||'';$('pollNote').value=p.note||'';
+      $('pollFormHeading').textContent='Edit Published Match Poll';$('pollSubmitButton').textContent='SAVE POLL CHANGES';$('cancelPollEdit').classList.remove('hidden');$('whatsappLink').classList.add('hidden');selectAdminTab('createPollPanel');window.scrollTo({top:0,behavior:'smooth'});
+    }));
+    $('adminPollList').querySelectorAll('[data-payment]').forEach(box=>box.addEventListener('change',()=>{
+      if(box.checked){const pair=$('adminPollList').querySelectorAll('[data-payment="'+box.dataset.payment+'"][data-user="'+box.dataset.user+'"]');pair.forEach(other=>{if(other!==box)other.checked=false;});}
+      else {const pair=$('adminPollList').querySelectorAll('[data-payment="'+box.dataset.payment+'"][data-user="'+box.dataset.user+'"]');if(!Array.from(pair).some(x=>x.checked))box.checked=true;}
+    }));
+    $('adminPollList').querySelectorAll('[data-savepayments]').forEach(b=>b.addEventListener('click',()=>{
+      const pid=b.dataset.savepayments;const boxes=Array.from($('adminPollList').querySelectorAll('[data-payment="'+pid+'"]'));
+      const byUser={};boxes.forEach(x=>{if(x.checked)byUser[x.dataset.user]=x.dataset.status;});
+      const statuses=Object.keys(byUser).map(userId=>({userId,status:byUser[userId]}));
+      call('adminSavePollPaymentStatuses',[adminCredentials.id,adminCredentials.password,pid,statuses],r=>{message(r.message||'Payment statuses updated.','success');loadAdmin();},b);
+    }));
+    $('adminPollList').querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{
+      call('adminSetPollActive',[adminCredentials.id,adminCredentials.password,b.dataset.toggle,b.dataset.active==='true'],()=>{message('Poll status updated.','success');loadAdmin();},b);
+    }));
+    $('adminPollList').querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{
+      if(!confirm('Permanently delete poll "'+b.dataset.title+'" and its responses/contributions?'))return;
+      call('adminDeletePoll',[adminCredentials.id,adminCredentials.password,b.dataset.delete,'DELETE'],()=>{message('Poll deleted.','success');loadAdmin();},b);
+    }));
+    $('adminPollList').querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>{
+      call('adminGetPollWhatsAppUrl',[adminCredentials.id,adminCredentials.password,b.dataset.share],result=>{const url=typeof result==='string'?result:(result&&result.whatsappUrl);if(url&&url.startsWith('https://wa.me/'))window.open(url,'_blank','noopener');else message('Unable to create WhatsApp share link.','error');},b);
+    }));
+  }
+
+  $('galleryForm').addEventListener('submit',function(e){
+    e.preventDefault();if(!adminCredentials)return message('Please login as admin.','error');
+    const item={title:$('galleryTitle').value,type:$('galleryType').value,url:$('galleryUrl').value,description:$('galleryDesc').value};
+    call('adminAddGalleryItem',[adminCredentials.id,adminCredentials.password,item],r=>{
+      $('galleryForm').reset();message(r.message,'success');loadAdminGallery();
+    },e.submitter);
+  });
+  function youtubeEmbed(url){
+    try{const u=new URL(url);if(u.hostname.includes('youtu.be'))return 'https://www.youtube.com/embed/'+u.pathname.slice(1);
+      if(u.hostname.includes('youtube.com')){const v=u.searchParams.get('v');if(v)return 'https://www.youtube.com/embed/'+v;}}
+    catch(e){}return '';
+  }
+  function galleryMarkup(items,adminMode){
+    return items.length?items.map(x=>{
+      let media='';
+      if(x.type==='VIDEO'){const embed=youtubeEmbed(x.url);media=embed?`<iframe width="100%" height="190" src="${esc(embed)}" title="${esc(x.title)}" allowfullscreen></iframe>`:`<a target="_blank" rel="noopener" href="${esc(x.url)}">Open video</a>`;}
+      else media=`<a target="_blank" rel="noopener" href="${esc(x.url)}"><img src="${esc(x.url)}" alt="${esc(x.title)}" loading="lazy"></a>`;
+      return `<div class="galleryitem">${media}<h4>${esc(x.title)}</h4><p class="small">${esc(x.description||'')}</p>${adminMode?`<div class="listactions"><button class="secondary" data-gallerytoggle="${esc(x.id)}" data-active="${!x.active}">${x.active?'HIDE':'PUBLISH'}</button><button class="danger" data-gallerydelete="${esc(x.id)}">DELETE</button></div>`:''}</div>`;
+    }).join(''):'<p class="muted">No gallery items yet.</p>';
+  }
+  function loadPlayerGallery(silent){
+    call('getGallery',[],items=>{
+      notificationGallery=items||[];
+      if(!notificationInitialized.gallery){notificationSeen.gallery=[];notificationInitialized.gallery=true;saveNotificationState();}
+      if(!silent || document.querySelector('[data-tab="gallery"]').classList.contains('active')) $('playerGallery').innerHTML=galleryMarkup(notificationGallery,false);
+      refreshNotificationCenter();
+    },null);
+  }
+  function loadAdminGallery(){
+    if(!adminCredentials)return;
+    call('adminGetGallery',[adminCredentials.id,adminCredentials.password],items=>{
+      $('adminGallery').innerHTML=galleryMarkup(items,true);
+      $('adminGallery').querySelectorAll('[data-gallerytoggle]').forEach(b=>b.addEventListener('click',()=>{
+        call('adminSetGalleryActive',[adminCredentials.id,adminCredentials.password,b.dataset.gallerytoggle,b.dataset.active==='true'],loadAdminGallery,b);
+      }));
+      $('adminGallery').querySelectorAll('[data-gallerydelete]').forEach(b=>b.addEventListener('click',()=>{
+        if(!confirm('Delete this gallery item?'))return;
+        call('adminDeleteGalleryItem',[adminCredentials.id,adminCredentials.password,b.dataset.gallerydelete],loadAdminGallery,b);
+      }));
+    });
+  }
+
+  // TEAM CHAT
+  $('communityChatForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const text=$('communityChatInput').value.trim();
+    if(!text)return;
+    call('communitySendChat',[playerPhone,text],r=>{
+      $('communityChatInput').value='';
+      loadCommunity();
+    },e.submitter);
+  });
+
+  document.querySelector('[data-tab="community"]').addEventListener('click',()=>{ if(notificationChat.length) markSeen('chat',notificationChat); });
+  document.querySelector('[data-tab="gallery"]').addEventListener('click',()=>{ if(notificationGallery.length) markSeen('gallery',notificationGallery); });
+
+  function loadCommunity(){
+    if(!playerPhone)return;
+    call('getCommunityData',[playerPhone],data=>{
+      notificationChat=(data&&data.chat)||[];
+      markSeen('chat',notificationChat);
+      renderCommunity(data);
+    });
+  }
+  function renderCommunity(data){
+    const messages=(data&&data.chat)||[];
+    $('communityChat').innerHTML=messages.length?messages.map(c=>`<div class="chatline"><div class="chatmessage">${esc(c.message)}</div><small class="chatauthor">— ${esc(c.author)}</small><small class="chattime">${esc(c.createdAt)}</small></div>`).join(''):'<p class="muted">No messages yet. Start the team conversation!</p>';
+    $('communityChat').scrollTop=0;
+  }
+
+  $('refreshTop').addEventListener('click',()=>{
+    if(playerPhone) loadPlayer();
+    else if(adminCredentials) loadAdmin();
+  });
+  $('logoutTop').addEventListener('click',()=>{
+    if(notificationPollTimer){clearInterval(notificationPollTimer);notificationPollTimer=null;}
+    playerPhone='';playerData=null;adminCredentials=null;adminData=null;notificationPolls=[];notificationGallery=[];notificationChat=[];
+    $('notificationPanel').classList.add('hidden');
+    showView('authView');message('You have logged out.','success');
+  });
+
+  // Show startup errors instead of silently leaving an unusable page.
+  try {
+    $('pollDate').value=new Date().toISOString().slice(0,10);
+    showView('authView');
+  } catch(err) {
+    message('Startup error: '+err.message,'error');
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
